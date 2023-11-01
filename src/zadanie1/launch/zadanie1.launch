@@ -10,4 +10,7 @@
   <!-- Node 3: zadanie1_subscriber -->
   <node name="zadanie1_subscriber" pkg="zadanie1" type="zadanie1_subscriber" output="screen"/>
 
+
+<rosparam command="load" file="$(find zadanie1)/parameters.yaml" />
+<include file="$(find rrm_simple_robot_model)/launch/robot_state_publisher.launch" />
 </launch>

@@ -27,7 +27,7 @@ bool Robot::validateJointNumber(int jointNumber) {
 }
 
 void Robot::publishStates(ros::NodeHandle n) {
-    ros::Publisher publisher = n.advertise<sensor_msgs::JointState>("/joint_states", 1);
+    ros::Publisher publisher = n.advertise<sensor_msgs::JointState>("/joint_states", 10);
     ros::Rate loop_rate(10);
     while (ros::ok()) {
         sensor_msgs::JointState msg;

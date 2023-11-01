@@ -11,8 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
         sensor_msgs
         rrm_msgs
-        std_srvs
-        std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -143,6 +141,8 @@ add_executable(${PROJECT_NAME}_node src/node.cpp
 add_executable(${PROJECT_NAME}_input src/input.cpp
         src/model/Robot.cpp
         src/model/Robot.h
+        src/service/Services.cpp
+        src/service/Services.h
 )
 add_executable(${PROJECT_NAME}_subscriber  src/subscriber.cpp
         src/model/Robot.cpp
@@ -222,3 +222,6 @@ target_link_libraries(${PROJECT_NAME}_subscriber
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+add_dependencies(${PROJECT_NAME}_node
+        ${${PROJECT_NAME}_EXPORTED_TARGETS}
+        ${catkin_EXPORTED_TARGETS})
