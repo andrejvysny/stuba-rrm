@@ -10,8 +10,8 @@ public:
     Robot(ros::NodeHandle* n);
 
     static const int jointCount = 6;
-    float getJointValue(int jointNumber);
-    void setJointValue(int jointNumber, float value);
+    double getJointValue(int jointNumber);
+    void setJointValue(int jointNumber, double value);
 
     bool moveRelativeCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::Response &res);
     bool moveAbsoluteCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::Response &res);
@@ -20,11 +20,11 @@ public:
 private:
 
     ros::NodeHandle* nodeHandle;
-    float joints[Robot::jointCount] = {0,0,0,0,0,0}; // TODO remove init
-    float jointLimits[Robot::jointCount][2];
+    double joints[Robot::jointCount] = {0,0,0,0,0,0};
+    double jointLimits[Robot::jointCount][2];
 
 
-    bool insideLimit(float valueToCheck, int jointNumber);
+    bool insideLimit(double valueToCheck, int jointNumber);
     static bool validateJointNumber(int jointNumber);
 };
 

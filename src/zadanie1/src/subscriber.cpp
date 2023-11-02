@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <geometry_msgs/Pose.h>
 #include "model/Robot.h"
 void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
 
@@ -21,4 +22,18 @@ void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg) {
 
    // ROS_INFO("----------------");
 
+}
+
+
+void publishData(ros::NodeHandle* nodeHandle) {
+    ros::Publisher publisher = nodeHandle->advertise<geometry_msgs::Pose>("/tool_pose", 10);
+    ros::Rate loop_rate(10);
+    while (ros::ok()) {
+        geometry_msgs::Pose msg;
+
+
+        //ROS_INFO("___________");
+        publisher.publish(msg);
+        loop_rate.sleep();
+    }
 }

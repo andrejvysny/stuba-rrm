@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     srv.request.positions.resize(Robot::jointCount);
 
     for (int i=0; i<Robot::jointCount; i++){
-        float number = 0.0;
+        double number = 0.0;
         ROS_INFO("Enter how much should joint move  joint_%i: ", i+1);
         std::cin >> number;
         srv.request.positions.at(i) = number;

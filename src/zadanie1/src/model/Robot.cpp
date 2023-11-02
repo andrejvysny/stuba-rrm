@@ -6,14 +6,14 @@
 #include <rrm_msgs/Move.h>
 
 
-void Robot::setJointValue(int jointNumber, float value) {
+void Robot::setJointValue(int jointNumber, double value) {
     if(!Robot::validateJointNumber(jointNumber)){
         throw std::exception();
     }
     this->joints[jointNumber-1] = value;
 }
 
-float Robot::getJointValue(int jointNumber) {
+double Robot::getJointValue(int jointNumber) {
     if(!Robot::validateJointNumber(jointNumber)){
         throw std::exception();
     }
@@ -89,11 +89,14 @@ bool Robot::moveRelativeCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::R
         return true;
     }
 
+
+    //fistly check
+    double newValue;
+
+
     for (int i = 0; i < Robot::jointCount; i++){
 
-        float prev = getJointValue(i+1);
-        float newValue = this->getJointValue(i+1) + req.positions[i];
-
+        newValue = this->getJointValue(i+1) + req.positions[i];
 
         if (!this->insideLimit(newValue,i)){
             res.success = false;
@@ -101,12 +104,18 @@ bool Robot::moveRelativeCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::R
             return true;
         }
 
-      //  ROS_INFO("Joint_%d prevValue: %5f, request: %5f, newValue: %5f, limits: <%5f, %5f>, InsideLimit: %s",i+1,prev,req.positions[i],newValue,this->insideLimit(newValue,i) ? "INSIDE":"OUTSIDE");
+        //ROS_INFO("Joint_%d prevValue: %5f, request: %5f, newValue: %5f, limits: <%5f, %5f>, InsideLimit: %s",i+1,prev,req.positions[i],newValue,this->jointLimits[i][0],this->jointLimits[i][1],(this->insideLimit(newValue,i) ? "INSIDE":"OUTSIDE"));
+    }
 
+    for (int i = 0; i < Robot::jointCount; i++){
+        double prev = getJointValue(i+1);
+        newValue = this->getJointValue(i+1) + req.positions[i];
+        ROS_INFO("Joint_%d prevValue: %5f, request: %5f, newValue: %5f, limits: <%5f, %5f>, InsideLimit: %s",i+1,prev,req.positions[i],newValue,this->jointLimits[i][0],this->jointLimits[i][1],(this->insideLimit(newValue,i) ? "INSIDE":"OUTSIDE"));
         this->setJointValue(i+1, newValue);
     }
     res.success = true;
     res.message = "Joints changed!";
+    ROS_INFO("--------------------------");
 
     //ROS_INFO("[SERVICE] /move_relative request [%.3f,%.3f,%.3f,%.3f,%.3f,%.3f]", req.positions[0], req.positions[1], req.positions[2], req.positions[3], req.positions[4], req.positions[5]);
     //ROS_INFO("[SERVICE] /move_relative Robot   [%.3f,%.3f,%.3f,%.3f,%.3f,%.3f]", getJointValue(1),getJointValue(2),getJointValue(3),getJointValue(4),getJointValue(5),getJointValue(6));
@@ -114,8 +123,21 @@ bool Robot::moveRelativeCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::R
     return true;
 }
 
-bool Robot::insideLimit(float valueToCheck, int jointNumber) {
-    return ((valueToCheck+FLT_EPSILON) >= this->jointLimits[jointNumber][0] && (valueToCheck-FLT_EPSILON) <= this->jointLimits[jointNumber][1]);
+bool Robot::insideLimit(double valueToCheck, int jointNumber) {
+
+    bool lowerLimit = (valueToCheck + FLT_EPSILON) >= this->jointLimits[jointNumber][0] ;
+    bool upperLimit = (valueToCheck - FLT_EPSILON) <= this->jointLimits[jointNumber][1] ;
+
+    if(!lowerLimit){
+        ROS_INFO("Joint_%d LowerLimit: %f, DATA: %f",jointNumber+1,this->jointLimits[jointNumber][0],valueToCheck);
+        return false;
+    }
+
+    if(!upperLimit){
+        ROS_INFO("Joint_%d UpperLimit: %f, DATA: %f",jointNumber+1,this->jointLimits[jointNumber][1],valueToCheck);
+        return false;
+    }
+    return true;
 }
 
 
