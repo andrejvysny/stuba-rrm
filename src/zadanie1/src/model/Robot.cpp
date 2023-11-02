@@ -3,6 +3,7 @@
 #include <string>
 #include "Robot.h"
 #include <sensor_msgs/JointState.h>
+#include <rrm_msgs/Move.h>
 
 
 void Robot::setJointValue(int jointNumber, float value) {
@@ -26,8 +27,8 @@ bool Robot::validateJointNumber(int jointNumber) {
     return true;
 }
 
-void Robot::publishStates(ros::NodeHandle n) {
-    ros::Publisher publisher = n.advertise<sensor_msgs::JointState>("/joint_states", 10);
+void Robot::publishStates() {
+    ros::Publisher publisher = this->nodeHandle->advertise<sensor_msgs::JointState>("/joint_states", 10);
     ros::Rate loop_rate(10);
     while (ros::ok()) {
         sensor_msgs::JointState msg;
@@ -44,3 +45,77 @@ void Robot::publishStates(ros::NodeHandle n) {
         loop_rate.sleep();
     }
 }
+
+Robot::Robot(ros::NodeHandle* n) {
+
+    this->nodeHandle = n;
+
+    for (int i = 0; i < Robot::jointCount; i++){
+        this->nodeHandle->getParam("joint" + std::to_string(i+1) + "/lower_limit", this->jointLimits[i][0]);
+        this->nodeHandle->getParam("joint" + std::to_string(i+1) + "/upper_limit", this->jointLimits[i][1]);
+    }
+
+}
+
+
+bool Robot::moveAbsoluteCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::Response &res) {
+    if (req.positions.size() != Robot::jointCount){
+        res.success = false;
+        res.message = "Invalid input!";
+        return true;
+    }
+    //ROS_INFO("[SERVICE] /move_absolute called I receive positions [%f,%f,%f,%f,%f,%f]", req.positions[0], req.positions[1], req.positions[2], req.positions[3], req.positions[4], req.positions[5]);
+
+    for (int i = 0; i < Robot::jointCount; i++){
+
+        if (!this->insideLimit(req.positions[i],i)){
+            res.success = false;
+            res.message = "Out of range";
+            return true;
+        }
+        this->setJointValue(i+1, req.positions[i]);
+    }
+    res.success = true;
+    res.message = "Joints changed!";
+    //ROS_INFO("[SERVICE] Robot positions [%f,%f,%f,%f,%f,%f]", robot.getJointValue(1),robot.getJointValue(2),robot.getJointValue(3),robot.getJointValue(4),robot.getJointValue(5),robot.getJointValue(6));
+
+    return true;
+}
+
+bool Robot::moveRelativeCallback(rrm_msgs::Move::Request &req, rrm_msgs::Move::Response &res) {
+    if (req.positions.size() != Robot::jointCount){
+        res.success = false;
+        res.message = "Invalid input!";
+        return true;
+    }
+
+    for (int i = 0; i < Robot::jointCount; i++){
+
+        float prev = getJointValue(i+1);
+        float newValue = this->getJointValue(i+1) + req.positions[i];
+
+
+        if (!this->insideLimit(newValue,i)){
+            res.success = false;
+            res.message = "Out of range";
+            return true;
+        }
+
+      //  ROS_INFO("Joint_%d prevValue: %5f, request: %5f, newValue: %5f, limits: <%5f, %5f>, InsideLimit: %s",i+1,prev,req.positions[i],newValue,this->insideLimit(newValue,i) ? "INSIDE":"OUTSIDE");
+
+        this->setJointValue(i+1, newValue);
+    }
+    res.success = true;
+    res.message = "Joints changed!";
+
+    //ROS_INFO("[SERVICE] /move_relative request [%.3f,%.3f,%.3f,%.3f,%.3f,%.3f]", req.positions[0], req.positions[1], req.positions[2], req.positions[3], req.positions[4], req.positions[5]);
+    //ROS_INFO("[SERVICE] /move_relative Robot   [%.3f,%.3f,%.3f,%.3f,%.3f,%.3f]", getJointValue(1),getJointValue(2),getJointValue(3),getJointValue(4),getJointValue(5),getJointValue(6));
+
+    return true;
+}
+
+bool Robot::insideLimit(float valueToCheck, int jointNumber) {
+    return ((valueToCheck+FLT_EPSILON) >= this->jointLimits[jointNumber][0] && (valueToCheck-FLT_EPSILON) <= this->jointLimits[jointNumber][1]);
+}
+
+

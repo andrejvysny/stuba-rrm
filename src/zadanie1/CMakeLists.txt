@@ -141,8 +141,6 @@ add_executable(${PROJECT_NAME}_node src/node.cpp
 add_executable(${PROJECT_NAME}_input src/input.cpp
         src/model/Robot.cpp
         src/model/Robot.h
-        src/service/Services.cpp
-        src/service/Services.h
 )
 add_executable(${PROJECT_NAME}_subscriber  src/subscriber.cpp
         src/model/Robot.cpp

@@ -1,6 +1,26 @@
-joint:
-  lower_limit: -1.57
-  upper_limit: 1.57
-link:
-  name: “wrist”
-  weight: 25.0
+joint1:
+  lower_limit: -1.62
+  upper_limit: 1.62
+
+joint2:
+  lower_limit: -0.96
+  upper_limit: 2.182
+
+joint3:
+  lower_limit: -0.96
+  upper_limit: 2.182
+
+joint4:
+  lower_limit: -3.14
+  upper_limit: 3.14
+
+joint5:
+  lower_limit: -2.2
+  upper_limit: 2.2
+
+joint6:
+  lower_limit: 0
+  upper_limit: 0.1
+
+
+
