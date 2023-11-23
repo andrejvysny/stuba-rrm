@@ -10,7 +10,9 @@ void Robot::setJointValue(int jointNumber, double value) {
     if(!Robot::validateJointNumber(jointNumber)){
         throw std::exception();
     }
+    this->mtx.lock();
     this->joints[jointNumber-1] = value;
+    this->mtx.unlock();
 }
 
 double Robot::getJointValue(int jointNumber) {

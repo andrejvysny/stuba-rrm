@@ -7,7 +7,7 @@ class Robot {
 
 public:
 
-    Robot(ros::NodeHandle* n);
+    explicit Robot(ros::NodeHandle* n);
 
     static const int jointCount = 6;
     double getJointValue(int jointNumber);
@@ -19,6 +19,7 @@ public:
     void publishStates();
 private:
 
+    std::mutex mtx;
     ros::NodeHandle* nodeHandle;
     double joints[Robot::jointCount] = {0,0,0,0,0,0};
     double jointLimits[Robot::jointCount][2];
