@@ -117,7 +117,7 @@
       <axis xyz="0 1 0"/>
       <parent link="${prefix}link_2"/>
       <child link="${prefix}link_3"/>
-      <limit effort="0" lower="-3.141" upper="1.308" velocity="3.054"/>
+      <limit effort="0" lower="-1.141" upper="1.008" velocity="3.054"/>
     </joint>
     <joint type="revolute" name="${prefix}joint_4">
       <origin xyz="0 0 0.175" rpy="0 0 0"/>
@@ -175,19 +175,9 @@
       <child link="${prefix}-toolbase"/>
     </joint>
 
-    <link name="${prefix}-toolend">
-      <visual>
-        <geometry>
-          <box size=" 0.02 0.02 0.02" />
-        </geometry>
-        <material name="green">
-          <color rgba="0 1 0 1"/>
-        </material>
-        <origin xyz="0.1 0 0" rpy="0 0 0" />
-      </visual>
-    </link>
+    <link name="${prefix}-toolend"/>
     <joint type="fixed" name="${prefix}joint_toolend">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.1 0 0" rpy="0 0 0"/>
       <parent link="${prefix}-toolbase"/>
       <child link="${prefix}-toolend"/>
     </joint>

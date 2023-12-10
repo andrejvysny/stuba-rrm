@@ -19,6 +19,8 @@ int main(int argc, char **argv) {
     spinner.start();
 
 
-    ros::waitForShutdown(); // Block until shutdown signal is received
+    publishThread.join();
+    moveRobotThread.join();
+    ros::waitForShutdown();
     return 0;
 }

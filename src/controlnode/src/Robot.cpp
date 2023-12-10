@@ -95,16 +95,17 @@ void Robot::moveRobot(){
     }
 
 
-
-    move_group_interface.setPoseTarget(
-            this->generatePosition(1.453, -0.075356, 1.1288, -0.0044783, 0.95249, 0.011199, 0.30433)
+    std::vector<geometry_msgs::Pose> waypoints;
+    waypoints.push_back(this->generatePosition(1.453, -0.075356, 1.1288, -0.0044783, 0.95249, 0.011199, 0.30433)
     );
 
-    if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS){
-        move_group_interface.move();
-    }else{
-        ROS_INFO("Error planning");
-    }
+
+    moveit_msgs::RobotTrajectory trajectory;
+    const double jump_threshold = 0.0;
+    const double eef_step = 0.01;
+    double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
+    ROS_INFO_NAMED("tutorial", "Visualizing plan 4 (Cartesian path) (%.2f%% achieved)", fraction * 100.0);
+    move_group_interface.execute(trajectory);
 
 
     move_group_interface.setPoseTarget(
@@ -132,21 +133,38 @@ void Robot::moveRobot(){
 
 
 
-    std::vector<geometry_msgs::Pose> waypoints;
-    waypoints.push_back(this->generatePosition(1.1362, -0.59457, 0.96394,-0.00048496, 0.90695, 3.1319e-05, 0.42125));
-    waypoints.push_back(this->generatePosition(1.1343, -0.84865, 0.96161,-0.0004795, 0.9069, -3.2872e-05, 0.42135));
+    std::vector<geometry_msgs::Pose> waypoints2;
+    waypoints2.push_back(this->generatePosition(1.1362, -0.59457, 0.96394,-0.00048496, 0.90695, 3.1319e-05, 0.42125));
+    waypoints2.push_back(this->generatePosition(1.1343, -0.84865, 0.96161,-0.0004795, 0.9069, -3.2872e-05, 0.42135));
 
 
-    moveit_msgs::RobotTrajectory trajectory;
-    const double jump_threshold = 0.0;
-    const double eef_step = 0.01;
-    double fraction = move_group_interface.computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
+    fraction = move_group_interface.computeCartesianPath(waypoints2, eef_step, jump_threshold, trajectory);
     ROS_INFO_NAMED("tutorial", "Visualizing plan 4 (Cartesian path) (%.2f%% achieved)", fraction * 100.0);
     move_group_interface.execute(trajectory);
 // WORKING
 
 
+    move_group_interface.setPoseTarget(
+            this->generatePosition(0.99188, -0.81832, 1.0817,0.00071617, 0.90668 ,-0.00085293, 0.42182)
+    );
 
+    if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS){
+        move_group_interface.move();
+    }else{
+        ROS_INFO("Error planning");
+    }
+
+
+
+    move_group_interface.setPoseTarget(
+            homePosition
+    );
+
+    if (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS){
+        move_group_interface.move();
+    }else{
+        ROS_INFO("Error planning");
+    }
 
 
 
