@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>trajectory_visualization</name>
+  <version>0.0.0</version>
+  <description>The trajectory_visualization package</description>
+  <maintainer email="michal.dobis@stuba.sk">Michal Dobis</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_export_depend>roscpp</build_export_depend>
+
+<!--  <build_depend>moveit_core</build_depend>-->
+<!--  <build_export_depend>moveit_core</build_export_depend>-->
+<!--  <exec_depend>moveit_core</exec_depend>-->
+
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_export_depend>moveit_ros_planning_interface</build_export_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
+
+
+  <export>
+
+  </export>
+</package>

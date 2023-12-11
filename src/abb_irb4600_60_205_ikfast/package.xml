@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='ASCII'?>
+<package>
+  <name>abb_irb4600_60_205_ikfast</name>
+  <version>1.0.0</version>
+  <description>The abb_irb4600_60_205_ikfast package</description>
+  <maintainer email="michal.dobis@stuba.com">Michal Dobis</maintainer>
+  <license>Copyright (c) 2019, Photoneo s.r.o. All rights reserved.</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>liblapack-dev</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>pluginlib</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf_conversions</build_depend>
+  <run_depend>liblapack-dev</run_depend>
+  <run_depend>moveit_core</run_depend>
+  <run_depend>pluginlib</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>tf_conversions</run_depend>
+  <export>
+    <moveit_core plugin="${prefix}/abb_irb4600_60_205_manipulator_moveit_ikfast_plugin_description.xml"/>
+  </export>
+</package>
