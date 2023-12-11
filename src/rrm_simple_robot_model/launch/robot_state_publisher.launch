@@ -1,6 +1,0 @@
-<launch>
-	<param name="robot_description" textfile="$(find rrm_simple_robot_model)/urdf/arm.urdf" />
-	<param name="use_gui" value="True"/>
- 	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
-	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find rrm_simple_robot_model)/config/rrm_cv3.rviz" required="true" />
-</launch>

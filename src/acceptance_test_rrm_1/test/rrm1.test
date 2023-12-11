@@ -1,4 +1,0 @@
-<launch>
-  <include file="$(find zadanie1)/launch/zadanie1.launch"/>
-  <test test-name="test_rrm1" pkg="acceptance_test_rrm_1" type="test_rrm1.py" />
-</launch>
