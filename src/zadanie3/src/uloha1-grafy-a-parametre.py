@@ -34,13 +34,17 @@ def getSpeed(t,a):
       return 0 + a[1] + 2*a[2]*t + 3*a[3]*t**2 + + 4*a[4]*t**3 + 5*a[5]*t**4
 
 def getAcceleration(t,a):
-      return 0 + 0 + 2*a[2] + 6*a[3]*t + 12*a[4]*t**2 + 20*a[5]*t**3  
+      return 0 + 0 + 2*a[2] + 6*a[3]*t + 12*a[4]*t**2 + 20*a[5]*t**3
+
+def getJerk(t,a):
+    return 6*a[3] + 24*a[4]*t + 60*a[5]*t**2
 
 
 def simulate(t0,tf,a):
     position = []
     speed = []
     acceleration = []
+    jerk = []
     time = []
     for t in np.arange(t0, tf, 0.05):
         position.append(
@@ -52,8 +56,11 @@ def simulate(t0,tf,a):
         acceleration.append(
                 getAcceleration(t,a)
         )
+        jerk.append(
+                getJerk(t,a)
+        )
         time.append(t)
-    return [position,speed,acceleration,time]
+    return [position,speed,acceleration,jerk,time]
 
 
 def Q1SimulationPlot(axis):
@@ -62,12 +69,13 @@ def Q1SimulationPlot(axis):
     Minv = np.linalg.inv(M)
     a_Q1_from_0_to_4 = np.dot(Minv,Q)
 
-    [position,speed,acceleration,time] = simulate(0,4,a_Q1_from_0_to_4)
+    [position,speed,acceleration,jerk,time] = simulate(0,4,a_Q1_from_0_to_4)
 
     axis.set_title(label="Q1")
     axis.plot(time, position, label="Position [rad]")
     axis.plot(time, speed, label= "Speed [m/s]")
     axis.plot(time, acceleration, label= "Acceleration [m/s^2]")
+    axis.plot(time, jerk, label= "Jerk [m/s^3]")
     axis.legend()
     
 
@@ -83,13 +91,14 @@ def Q3SimulationPlot(axis):
     Minv = np.linalg.inv(M)
     a_Q3_from_1_to_4 = np.dot(Minv,Q)
 
-    [position1,speed1,acceleration1,time1] = simulate(0,1,a_Q3_from_0_to_1)
-    [position2,speed2,acceleration2,time2] = simulate(1,4,a_Q3_from_1_to_4)
+    [position1,speed1,acceleration1,jerk1,time1] = simulate(0,1,a_Q3_from_0_to_1)
+    [position2,speed2,acceleration2,jerk2,time2] = simulate(1,4,a_Q3_from_1_to_4)
     
     axis.set_title(label="Q3")
     axis.plot(time1+time2, position1+position2, label="Position [rad]")
     axis.plot(time1+time2, speed1+speed2, label= "Speed [m/s]")
     axis.plot(time1+time2, acceleration1+acceleration2, label= "Acceleration [m/s^2]")
+    axis.plot(time1+time2, jerk1+jerk2, label= "Jerk [m/s^3]")
     axis.legend()
     
   
