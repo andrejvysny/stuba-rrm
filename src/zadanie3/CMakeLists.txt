@@ -9,8 +9,12 @@ project(zadanie3)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+        eigen_conversions
         moveit_ros_planning_interface
 )
+
+find_package(Eigen3 REQUIRED)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,6 +121,8 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+        ${EIGEN3_INCLUDE_DIRS}
+
 )
 
 ## Declare a C++ library
@@ -133,6 +139,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_trajectory src/trajectory.cpp)
+add_executable(${PROJECT_NAME}_move src/move.cpp)
+add_executable(${PROJECT_NAME}_iksolver src/iksolver.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -203,7 +211,9 @@ add_executable(${PROJECT_NAME}_trajectory src/trajectory.cpp)
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+add_dependencies(${PROJECT_NAME}_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_trajectory ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME}_trajectory
-        ${catkin_LIBRARIES}
-)
+add_dependencies(${PROJECT_NAME}_iksolver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_move ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_iksolver ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_trajectory ${catkin_LIBRARIES})
