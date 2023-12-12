@@ -140,7 +140,6 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_trajectory src/trajectory.cpp)
 add_executable(${PROJECT_NAME}_move src/move.cpp)
-add_executable(${PROJECT_NAME}_iksolver src/iksolver.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -213,7 +212,5 @@ add_executable(${PROJECT_NAME}_iksolver src/iksolver.cpp)
 # catkin_add_nosetests(test)
 add_dependencies(${PROJECT_NAME}_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_trajectory ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(${PROJECT_NAME}_iksolver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_move ${catkin_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_iksolver ${catkin_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_trajectory ${catkin_LIBRARIES})

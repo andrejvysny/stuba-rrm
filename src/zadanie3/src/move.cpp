@@ -17,6 +17,15 @@ double getPosition(double t, Eigen::VectorXd a) {
     return a[0] + a[1] * t + a[2] * pow(t, 2) + a[3] * pow(t, 3) + +a[4] * pow(t, 4) + a[5] * pow(t, 5);
 }
 
+double getVelocity(double t, Eigen::VectorXd a) {
+    return 0 + a[1] + 2 * a[2] * t + 3 * a[3] * pow(t, 2) + +4 * a[4] * pow(t, 3) + 5 * a[5] * pow(t, 4);
+}
+
+double getAcceleration(double t, Eigen::VectorXd a) {
+    return 0 + 0 + 2 * a[2] + 6 * a[3] * t + 12 * a[4] * pow(t, 2) + 20 * a[5] * pow(t, 3);
+}
+
+
 Eigen::MatrixXd getM6(double t0, double tf) {
     Eigen::MatrixXd m(6, 6);
     m << 1, t0, pow(t0, 2), pow(t0, 3), pow(t0, 4), pow(t0, 5),
@@ -178,8 +187,68 @@ Eigen::Affine3d getTargetPosition(double y, double z, double rz){
 
 std::vector<double> getBestSolution(std::vector<std::vector<double>> solutions){
     //TODO: calculate shortest path
+
     return solutions[0];
 }
+
+
+void saveDataToCSV(
+        std::vector<double> t,
+        std::vector<double> y,  std::vector<double> z,  std::vector<double> rz,
+        std::vector<double> yd,  std::vector<double> zd,  std::vector<double> rzd,
+        std::vector<double> ydd,  std::vector<double> zdd,  std::vector<double> rzdd
+        ){
+
+    std::string filename = "zadanie3_output2.csv";
+    std::ofstream outputFile(filename);
+
+    if (!outputFile.is_open()) {
+        std::cerr << "Error opening file for writing: " << filename << std::endl;
+       exit(1);
+    }
+
+    outputFile << "t,y,z,rz,yd,zd,rzd,ydd,zdd,rzdd\n";
+
+    for (int i = 0; i < t.size(); ++i) {
+        outputFile << t.at(i);
+        outputFile << ",";
+
+        outputFile << y.at(i);
+        outputFile << ",";
+
+        outputFile << z.at(i);
+        outputFile << ",";
+
+        outputFile << rz.at(i);
+        outputFile << ",";
+
+        outputFile << yd.at(i);
+        outputFile << ",";
+
+        outputFile << zd.at(i);
+        outputFile << ",";
+
+        outputFile << rzd.at(i);
+        outputFile << ",";
+
+
+        outputFile << ydd.at(i);
+        outputFile << ",";
+
+        outputFile << zdd.at(i);
+        outputFile << ",";
+
+        outputFile << rzdd.at(i);
+        outputFile << ",";
+
+
+        outputFile << "\n";
+
+    }
+
+    outputFile.close();
+}
+
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "trajectory_visualization");
@@ -190,18 +259,18 @@ int main(int argc, char **argv) {
 
     ROS_INFO("INIT\n\n");
 
-    // Trajectory steps (t,x,y,z,rx,ry,rz)
-    std::vector<std::vector<double>> trajectorySteps = {
-            {0,1,0,1.6,0,M_PI/2,0}, // T=0
-            {1,1,0,1,0,M_PI/2,0}, // T=1
-            {2,1,0,1,0,M_PI/2,M_PI/2}, // T=2
-            {3,1,0,1,0,M_PI/2,M_PI/2}, // T=3
-            {4,1,0.5,1,0,M_PI/2,M_PI/2}, // T=4
-            {5,1,0.5,1.6,0,M_PI/2,0}, // T=5
-            {9,1,0,1.6,0,M_PI/2,0}, // T=9
-    };
+    std::vector<double> t_data;
+    std::vector<double> positionY_data;
+    std::vector<double> positionZ_data;
+    std::vector<double> rotationZ_data;
 
+    std::vector<double> velocityY_data;
+    std::vector<double> velocityZ_data;
+    std::vector<double> velocityRZ_data;
 
+    std::vector<double> accY_data;
+    std::vector<double> accZ_data;
+    std::vector<double> accRZ_data;
 
     for (double t = 0; t <= 9; t += 0.1) {
 
@@ -214,6 +283,27 @@ int main(int argc, char **argv) {
         double YPosition = getPosition(t,getYParameterForT(t));
         double ZPosition = getPosition(t, getZParameterForT(t));
         double RZRotation = getPosition(t, getRZParameterForT(t));
+
+        double YVel = getVelocity(t,getYParameterForT(t));
+        double ZVel = getVelocity(t, getZParameterForT(t));
+        double RZVel = getVelocity(t, getRZParameterForT(t));
+
+        double YAcc = getAcceleration(t,getYParameterForT(t));
+        double ZAcc = getAcceleration(t, getZParameterForT(t));
+        double RZAcc = getAcceleration(t, getRZParameterForT(t));
+
+        t_data.push_back(t);
+        positionY_data.push_back(YPosition);
+        positionZ_data.push_back(ZPosition);
+        rotationZ_data.push_back(RZRotation);
+
+        velocityY_data.push_back(YVel);
+        velocityZ_data.push_back(ZVel);
+        velocityRZ_data.push_back(RZVel);
+
+        accY_data.push_back(YAcc);
+        accZ_data.push_back(ZAcc);
+        accRZ_data.push_back(RZAcc);
 
         Eigen::Affine3d targetPosition = getTargetPosition(YPosition, ZPosition ,RZRotation);
 
@@ -230,10 +320,16 @@ int main(int argc, char **argv) {
             point.accelerations[i] = 0;
         }
 
-
         point.time_from_start = ros::Duration(t);
         trajectory.joint_trajectory.points.push_back(point);
     }
+
+    saveDataToCSV(
+            t_data,
+            positionY_data,positionZ_data,rotationZ_data,
+            velocityY_data, velocityZ_data, velocityRZ_data,
+            accY_data, accZ_data, accRZ_data
+            );
 
     // Sprava pre vizualizaciu
     moveit_msgs::DisplayTrajectory display_trajectory;
@@ -256,7 +352,7 @@ int main(int argc, char **argv) {
 
 std::vector<std::vector<double>> calculateSolutionsForTargetPosition(Eigen::Affine3d target){
 
-    // Vytvorenie modelu z urdf
+    // Vytvorenie modelu z urdf -> TODO: presunuť do main - dlho trva
     robot_model_loader::RobotModelLoader loader("robot_description");
 
     // Vyber move group a IK algoritmu

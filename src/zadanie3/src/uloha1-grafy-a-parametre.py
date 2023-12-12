@@ -75,9 +75,9 @@ def Q1SimulationPlot(axis):
 
     axis.set_title(label="Q1")
     axis.plot(time, position, label="Position [rad]")
-    axis.plot(time, speed, label= "Speed [m/s]")
-    axis.plot(time, acceleration, label= "Acceleration [m/s^2]")
-    axis.plot(time, jerk, label= "Jerk [m/s^3]")
+    axis.plot(time, speed, label= "Speed [rad/s]")
+    axis.plot(time, acceleration, label= "Acceleration [rad/s^2]")
+    axis.plot(time, jerk, label= "Jerk [rad/s^3]")
     axis.legend()
 
 
@@ -102,9 +102,9 @@ def Q3SimulationPlot(axis):
     
     axis.set_title(label="Q3")
     axis.plot(time1+time2, position1+position2, label="Position [rad]")
-    axis.plot(time1+time2, speed1+speed2, label= "Speed [m/s]")
-    axis.plot(time1+time2, acceleration1+acceleration2, label= "Acceleration [m/s^2]")
-    axis.plot(time1+time2, jerk1+jerk2, label= "Jerk [m/s^3]")
+    axis.plot(time1+time2, speed1+speed2, label= "Speed [rad/s]")
+    axis.plot(time1+time2, acceleration1+acceleration2, label= "Acceleration [rad/s^2]")
+    axis.plot(time1+time2, jerk1+jerk2, label= "Jerk [rad/s^3]")
     axis.legend()
     
   
