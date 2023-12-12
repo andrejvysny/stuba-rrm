@@ -79,7 +79,6 @@ def Q1SimulationPlot(axis):
     axis.plot(time, acceleration, label= "Acceleration [m/s^2]")
     axis.plot(time, jerk, label= "Jerk [m/s^3]")
     axis.legend()
-    
 
 
 def Q3SimulationPlot(axis):
@@ -112,6 +111,9 @@ def Q3SimulationPlot(axis):
 figure, axis = plt.subplots(1, 2) 
 
 Q1SimulationPlot(axis[0])
+axis[0].set_xlabel("Time [s]")
 Q3SimulationPlot(axis[1])
-  
+axis[1].set_xlabel("Time [s]")
+
+
 plt.show() 

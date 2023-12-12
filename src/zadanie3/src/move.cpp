@@ -167,35 +167,16 @@ Eigen::VectorXd getRZParameterForT(double t){
 }
 
 
-void calcTargetPosition(Eigen::Affine3d* targetPositionPtr, double y, double z, double rz){
 
-    if (targetPositionPtr == nullptr) {
-        ROS_ERROR("NOT PASSED POINTER on target");
-        exit(1);
-    }
-
-
-
-    if (!targetPositionPtr->matrix().isZero(0)){
-
-        Eigen::Affine3d targetValue = *targetPositionPtr;
-
-        targetPositionPtr* = targetValue*
-                Eigen::Translation3d(Eigen::Vector3d(1, y, z))*
-                  Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX())*
-                  Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitY())*
-                  Eigen::AngleAxisd(rz,Eigen::Vector3d::UnitZ());
-    }else{
-        targetPositionPtr* = Eigen::Translation3d(Eigen::Vector3d(1, y, z))*
-                  Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX())*
-                  Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitY())*
-                  Eigen::AngleAxisd(rz,Eigen::Vector3d::UnitZ());
-    }
-
+Eigen::Affine3d getTargetPosition(double y, double z, double rz){
+    Eigen::Affine3d target = Eigen::Translation3d(Eigen::Vector3d(1, y, z))*
+                              Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX())*
+                              Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitY())*
+                              Eigen::AngleAxisd(rz,Eigen::Vector3d::UnitZ());
+    return target;
 }
 
 std::vector<double> getBestSolution(std::vector<std::vector<double>> solutions){
-
     //TODO: calculate shortest path
     return solutions[0];
 }
@@ -220,7 +201,6 @@ int main(int argc, char **argv) {
             {9,1,0,1.6,0,M_PI/2,0}, // T=9
     };
 
-    Eigen::Affine3d targetPosition;
 
 
     for (double t = 0; t <= 9; t += 0.1) {
@@ -235,22 +215,7 @@ int main(int argc, char **argv) {
         double ZPosition = getPosition(t, getZParameterForT(t));
         double RZRotation = getPosition(t, getRZParameterForT(t));
 
-
-        if (!targetPosition.matrix().isZero(0)){
-
-            targetPosition = targetPosition*
-                                 Eigen::Translation3d(Eigen::Vector3d(1, YPosition, ZPosition))*
-                                 Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX())*
-                                 Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitY())*
-                                 Eigen::AngleAxisd(RZRotation,Eigen::Vector3d::UnitZ());
-        }else{
-            targetPosition = Eigen::Translation3d(Eigen::Vector3d(1, YPosition, ZPosition))*
-                                 Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX())*
-                                 Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitY())*
-                                 Eigen::AngleAxisd(RZRotation,Eigen::Vector3d::UnitZ());
-        }
-
-        //calcTargetPosition(&targetPosition, YPosition, ZPosition ,RZRotation);
+        Eigen::Affine3d targetPosition = getTargetPosition(YPosition, ZPosition ,RZRotation);
 
         // Inverse kinematics solver -> get solutions - vypocita hodnoty pre klby
         std::vector<std::vector<double>> solutions = calculateSolutionsForTargetPosition(targetPosition);
@@ -260,9 +225,9 @@ int main(int argc, char **argv) {
 
         // zapíše sa hodnota pre prve najdene riešenie ako hodnota pre klb
         for (int i = 0; i < 6; ++i) {
-            point.positions[0] = bestSolution[i];
-            point.velocities[0] = 0;
-            point.accelerations[0] = 0;
+            point.positions[i] = bestSolution[i];
+            point.velocities[i] = 0;
+            point.accelerations[i] = 0;
         }
 
 
