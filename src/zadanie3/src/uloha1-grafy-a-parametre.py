@@ -70,6 +70,7 @@ def Q1SimulationPlot(axis):
     a_Q1_from_0_to_4 = np.dot(Minv,Q)
 
     print(a_Q1_from_0_to_4)
+    print("\n a_Q1_from_0_to_4")
 
     [position,speed,acceleration,jerk,time] = simulate(0,4,a_Q1_from_0_to_4)
 
@@ -86,6 +87,7 @@ def Q3SimulationPlot(axis):
     Q = Q6(0,0,0,rad(30),0,0)
     Minv = np.linalg.inv(M)
     a_Q3_from_0_to_1 = np.dot(Minv,Q)
+    print("\n")
 
     M = M6(1,4)
     Q = Q6(rad(30),0,0,0,0,0)
@@ -94,8 +96,10 @@ def Q3SimulationPlot(axis):
 
 
     print(a_Q3_from_0_to_1)
-    print(a_Q3_from_1_to_4)
+    print("\na_Q3_from_0_to_1")
 
+    print(a_Q3_from_1_to_4)
+    print("\na_Q3_from_1_to_4")
 
     [position1,speed1,acceleration1,jerk1,time1] = simulate(0,1,a_Q3_from_0_to_1)
     [position2,speed2,acceleration2,jerk2,time2] = simulate(1,4,a_Q3_from_1_to_4)

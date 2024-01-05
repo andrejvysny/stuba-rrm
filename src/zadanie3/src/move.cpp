@@ -305,6 +305,14 @@ int main(int argc, char **argv) {
         accZ_data.push_back(ZAcc);
         accRZ_data.push_back(RZAcc);
 
+
+        std::cout << "\n\n------\n";
+        std::cout << "t: " << t << "\n";
+        std::cout << "y: " << YPosition << "\n";
+        std::cout << "z: " << ZPosition << "\n";
+        std::cout << "rz: " << RZRotation << "\n";
+        std::cout << "------\n\n";
+
         Eigen::Affine3d targetPosition = getTargetPosition(YPosition, ZPosition ,RZRotation);
 
         // Inverse kinematics solver -> get solutions - vypocita hodnoty pre klby
